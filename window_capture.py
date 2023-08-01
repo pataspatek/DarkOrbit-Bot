@@ -22,9 +22,9 @@ class WindowCapture:
                 raise Exception(f'Window not found {window_name}')
 
         # Returns the rectangle for a window in screen coordinates (left, top, right, bottom)
-        left, top, right, bottom = win32gui.GetWindowRect(self.hwnd)
-        self.window_width = right - left 
-        self.window_height = bottom - top 
+        window_rect = win32gui.GetWindowRect(self.hwnd)
+        self.window_width = window_rect[2] - window_rect[0] 
+        self.window_height = window_rect[3] - window_rect[1] 
 
         # Adjust window dimensions and starting position considering borders and title bar
         border_pixels = 8       # Width of the window border in pixels
@@ -39,6 +39,10 @@ class WindowCapture:
         # Set the starting position for the window content, considering the border and title bar
         self.starting_x = border_pixels
         self.starting_y = titlebar_pixels
+
+        # Set the cropped coordinates offset so we can translate screenshot images into actual screen positions
+        self.offset_x = window_rect[0] + self.starting_x
+        self.offset_y = window_rect[1] + self.starting_y
 
 
     def get_screenshot(self):
@@ -100,3 +104,26 @@ class WindowCapture:
         img = np.ascontiguousarray(img)
 
         return img
+    
+
+    # Find the name of the window you're interested in.
+    # https://stackoverflow.com/questions/55547940/how-to-get-a-list-of-the-name-of-every-open-window
+    @staticmethod
+    def list_window_names():
+        def winEnumHandler(hwnd, ctx):
+            if win32gui.IsWindowVisible(hwnd):
+                print(hex(hwnd), win32gui.GetWindowText(hwnd))
+        win32gui.EnumWindows(winEnumHandler, None)
+
+
+    def get_screen_position(self, window_coordinats):
+        """
+        Convert window coordinates to screen position.
+
+        This method takes individual (x, y) coordinates from the window and converts them into the actual position on the screen.
+
+        :param window_coordinates (tuple): A tuple containing the (x, y) coordinates from the window.
+        :return: A tuple containing the screen position as (x, y) coordinates.
+        """
+        
+        return (window_coordinats[0] + self.offset_x, window_coordinats[1] + self.offset_y)
