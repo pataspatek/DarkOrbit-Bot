@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import random
 
 
 class ScreenDetector:
@@ -8,6 +9,8 @@ class ScreenDetector:
         """
         Initialize the ScreenDetector class.
         """
+        pass
+
 
     def find(self, haystack_img, needle_img_path, threshold=0.75, method=cv.TM_CCOEFF_NORMED):
         """

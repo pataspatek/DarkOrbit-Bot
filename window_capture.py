@@ -115,15 +115,3 @@ class WindowCapture:
                 print(hex(hwnd), win32gui.GetWindowText(hwnd))
         win32gui.EnumWindows(winEnumHandler, None)
 
-
-    def get_screen_position(self, window_coordinats):
-        """
-        Convert window coordinates to screen position.
-
-        This method takes individual (x, y) coordinates from the window and converts them into the actual position on the screen.
-
-        :param window_coordinates (tuple): A tuple containing the (x, y) coordinates from the window.
-        :return: A tuple containing the screen position as (x, y) coordinates.
-        """
-        
-        return (window_coordinats[0] + self.offset_x, window_coordinats[1] + self.offset_y)
