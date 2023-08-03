@@ -1,8 +1,25 @@
 import win32gui, win32ui, win32con
 import numpy as np
 import cv2 as cv
+from threading import Thread, Lock
+
 
 class WindowCapture:
+
+    # Thread properties.
+    running = False
+    lock = None
+    screenshot = None
+
+    # Winwo properties.
+    window_width = 0
+    window_height = 0
+    hwnd = None
+    starting_x = 0
+    starting_y = 0
+    offset_x = 0
+    offset_y = 0
+
 
     def __init__(self, window_name=None):
         """
@@ -12,6 +29,13 @@ class WindowCapture:
             The name of the window to capture. If None, it captures the entire desktop.
             Default is None.
         """
+
+        self.running = False
+
+        # Create a thread lock object
+        self.lock = Lock()
+
+        self.screenshot = None
 
         # Retrieves a handle to the top-level window whose class name and window name match the specified strings.
         if window_name is None:
@@ -82,7 +106,7 @@ class WindowCapture:
 
         # Convert the raw data into a format opencv can read
         signedIntsArray = dataBitMap.GetBitmapBits(True)
-        img = np.fromstring(signedIntsArray, dtype='uint8')
+        img = np.frombuffer(signedIntsArray, dtype='uint8')
         img.shape = (self.window_height, self.window_width, 4)
 
         # Free resources to avoid memory leak
@@ -115,3 +139,39 @@ class WindowCapture:
                 print(hex(hwnd), win32gui.GetWindowText(hwnd))
         win32gui.EnumWindows(winEnumHandler, None)
 
+
+    def start(self):
+        """
+        Start the window capture.
+
+        This method sets the running flag to True and starts the window capture's main thread.
+        """
+        self.running = True
+        t = Thread(target=self.run)
+        t.start()
+
+
+    def stop(self):
+        """
+        Stop the window capture.
+
+        This method sets the running flag to False, which stops the window capture's main loop.
+        """
+        self.running = False
+
+
+    def run(self):
+        """
+        The main loop of the window capture.
+
+        This method runs in a separate thread when the window capture is started. It will continue to execute until the window capture is stopped.
+        """
+        while self.running:
+            
+            # Update the screenshot of the window
+            screenshot = self.get_screenshot()
+
+            # Lock the thread while updating the properties
+            self.lock.acquire()
+            self.screenshot = screenshot
+            self.lock.release()

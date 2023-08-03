@@ -1,9 +1,8 @@
 import cv2 as cv
 import numpy as np
-import random
 
 
-class ScreenDetector:
+class Vision:
 
     def __init__(self):
         """
@@ -17,8 +16,10 @@ class ScreenDetector:
         Find the needle images in the haystack image using template matching.
 
         :param haystack_img: The image in which the needle image will be searched.
-        :param threshold: Similarity threshold for template matching (default: 0.8).
-        :return: List of rectangles containing the locations of matched needle images in a format [x, y, width, height].
+        :param needle_img_path: Path to the needle image.
+        :param threshold: Similarity threshold for template matching (default: 0.75).
+        :param method: Method to use for template matching (default: cv.TM_CCOEFF_NORMED).
+        :return: List of rectangles containing the locations of matched needle images in the format [x, y, width, height].
         """
 
         self.needle_img = cv.imread(needle_img_path, cv.IMREAD_UNCHANGED)
