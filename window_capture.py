@@ -2,6 +2,7 @@ import win32gui, win32ui, win32con
 import numpy as np
 import cv2 as cv
 from threading import Thread, Lock
+import time
 
 
 class WindowCapture:
