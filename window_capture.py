@@ -167,6 +167,9 @@ class WindowCapture:
 
         This method runs in a separate thread when the window capture is started. It will continue to execute until the window capture is stopped.
         """
+
+        time.sleep(5)
+
         while self.running:
             
             # Update the screenshot of the window

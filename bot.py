@@ -19,7 +19,7 @@ class Bot():
 
     # Bot properties
     state = None
-    found_objects = None
+    found_objects = []
 
 
     def __init__(self, window_size, window_offset, mini_map) -> None:
@@ -81,11 +81,6 @@ class Bot():
         screen_y = position[1] + self.offset_y
         return screen_x, screen_y
     
-    
-    def stop_movement(self):
-        coordinates = ((self.window_width // 2) + 150, self.window_height // 2,)
-        self.click(coordinates)
-
 
     def collect(self):
         first_rectangle = self.found_objects[0]
@@ -127,6 +122,7 @@ class Bot():
 
         This method runs in a separate thread when the bot is started. It will continue to execute until the bot is stopped.
         """
+        
         while self.running:
 
             # INITIALIZING STATE
@@ -156,6 +152,8 @@ class Bot():
                     # Check if the maximum waiting time is reached
                     elapsed_time = time.time() - start_time
 
+                    # TODO: Two conditions that break the inner while loop. What is a bette rapproach?
+
                     if elapsed_time >= max_waiting_time:
                         break
 
@@ -170,14 +168,9 @@ class Bot():
 
             elif self.state == BotState.COLLETING:
 
-                self.stop_movement()
-
-                while len(self.found_objects) >= 1:
+                while len(self.found_objects) > 0:
                     self.collect()
-                    self.lock.acquire()
-                    self.found_objects = self.found_objects[1:]  # Remove the first item from the list
-                    self.lock.release()
-                    time.sleep(3)
+                    time.sleep(2)
 
                 self.lock.acquire()
                 self.state = BotState.MOVING
