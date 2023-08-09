@@ -1,8 +1,6 @@
 import win32gui, win32ui, win32con
 import numpy as np
-import cv2 as cv
 from threading import Thread, Lock
-import time
 
 
 class WindowCapture:
@@ -31,12 +29,11 @@ class WindowCapture:
             Default is None.
         """
 
+        # Initialize the state of the running thread to False
         self.running = False
 
         # Create a thread lock object
         self.lock = Lock()
-
-        self.screenshot = None
 
         # Retrieves a handle to the top-level window whose class name and window name match the specified strings.
         if window_name is None:
@@ -68,6 +65,8 @@ class WindowCapture:
         # Set the cropped coordinates offset so we can translate screenshot images into actual screen positions
         self.offset_x = window_rect[0] + self.starting_x
         self.offset_y = window_rect[1] + self.starting_y
+
+        self.screenshot = self.get_screenshot()
 
 
     def get_screenshot(self):
@@ -167,8 +166,6 @@ class WindowCapture:
 
         This method runs in a separate thread when the window capture is started. It will continue to execute until the window capture is stopped.
         """
-
-        time.sleep(5)
 
         while self.running:
             

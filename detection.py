@@ -23,7 +23,7 @@ class Detection():
         self.rectangles = []
 
 
-    def find(self, haystack_img, needle_img_path, threshold=0.75, method=cv.TM_CCOEFF_NORMED):
+    def find(self, haystack_img, threshold=0.75, method=cv.TM_CCOEFF_NORMED):
         """
         Find the needle images in the haystack image using template matching.
 
@@ -34,14 +34,12 @@ class Detection():
         :return: List of rectangles containing the locations of matched needle images in the format [x, y, width, height].
         """
 
-        self.needle_img = cv.imread(needle_img_path, cv.IMREAD_UNCHANGED)
+        # Read the needle image
+        self.needle_img = cv.imread(self.needle_img_path, cv.IMREAD_UNCHANGED)
 
         # Get the width and the height of the needle image
         needle_img_height = self.needle_img.shape[0]
         needle_img_width = self.needle_img.shape[1]
-
-        # Read the needle image
-        self.needle_img = cv.imread(needle_img_path, cv.IMREAD_UNCHANGED)
 
         # Find needle img in the haystack img
         result = cv.matchTemplate(haystack_img, self.needle_img, method)
@@ -165,7 +163,7 @@ class Detection():
         """
         while self.running:
             if not self.screenshot is None:
-                rectangles = self.find(self.screenshot, self.needle_img_path)
+                rectangles = self.find(self.screenshot)
 
                 # lock the thread while updating the results
                 self.lock.acquire()
