@@ -10,7 +10,7 @@ class WindowCapture:
     lock = None
     screenshot = None
 
-    # Winwo properties.
+    # Window properties.
     window_width = 0
     window_height = 0
     hwnd = None
@@ -66,6 +66,7 @@ class WindowCapture:
         self.offset_x = window_rect[0] + self.starting_x
         self.offset_y = window_rect[1] + self.starting_y
 
+        # Take a screenshot upon initialization
         self.screenshot = self.get_screenshot()
 
 
@@ -134,6 +135,9 @@ class WindowCapture:
     # https://stackoverflow.com/questions/55547940/how-to-get-a-list-of-the-name-of-every-open-window
     @staticmethod
     def list_window_names():
+        """
+        Helper method for finding the window name.
+        """
         def winEnumHandler(hwnd, ctx):
             if win32gui.IsWindowVisible(hwnd):
                 print(hex(hwnd), win32gui.GetWindowText(hwnd))
@@ -142,10 +146,9 @@ class WindowCapture:
 
     def start(self):
         """
-        Start the window capture.
-
-        This method sets the running flag to True and starts the window capture's main thread.
+        Start the window capture thread.
         """
+
         self.running = True
         t = Thread(target=self.run)
         t.start()
@@ -153,18 +156,15 @@ class WindowCapture:
 
     def stop(self):
         """
-        Stop the window capture.
-
-        This method sets the running flag to False, which stops the window capture's main loop.
+        Stop the window capture thread.
         """
+
         self.running = False
 
 
     def run(self):
         """
-        The main loop of the window capture.
-
-        This method runs in a separate thread when the window capture is started. It will continue to execute until the window capture is stopped.
+        The main loop of the window capture thread.
         """
 
         while self.running:

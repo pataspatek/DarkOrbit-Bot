@@ -17,9 +17,19 @@ class Detection():
 
     def __init__(self, needle_img_path) -> None:
         
+        # Initialize the state of the running thread to False
+        self.running = False
+
+        # Create a thread lock object
         self.lock = Lock()
+        
+        # Path to the image for detection
         self.needle_img_path = needle_img_path
+
+        # Haystack image in which the image is detected
         self.screenshot = None
+
+        # Rectangles of the found images
         self.rectangles = []
 
 
@@ -28,7 +38,6 @@ class Detection():
         Find the needle images in the haystack image using template matching.
 
         :param haystack_img: The image in which the needle image will be searched.
-        :param needle_img_path: Path to the needle image.
         :param threshold: Similarity threshold for template matching (default: 0.75).
         :param method: Method to use for template matching (default: cv.TM_CCOEFF_NORMED).
         :return: List of rectangles containing the locations of matched needle images in the format [x, y, width, height].
@@ -130,6 +139,13 @@ class Detection():
 
         
     def update(self, screenshot):
+        """
+        Update the screenshot for detection.
+
+        :param screenshot: Haystack image in which the objects are detected.
+        """
+
+        # Lock the thread while updating the properties
         self.lock.acquire()
         self.screenshot = screenshot
         self.lock.release()
@@ -138,9 +154,8 @@ class Detection():
     def start(self):
         """
         Start the detection.
-
-        This method sets the running flag to True and starts the detection's main thread.
         """
+
         self.running = True
         t = Thread(target=self.run)
         t.start()
@@ -149,9 +164,8 @@ class Detection():
     def stop(self):
         """
         Stop the detection.
-
-        This method sets the running flag to False, which stops the detection's main loop.
         """
+
         self.running = False
 
 
@@ -161,11 +175,12 @@ class Detection():
 
         This method runs in a separate thread when the detection is started. It will continue to execute until the detection is stopped.
         """
+        
         while self.running:
             if not self.screenshot is None:
                 rectangles = self.find(self.screenshot)
 
-                # lock the thread while updating the results
+                # Lock the thread while updating the results
                 self.lock.acquire()
                 self.rectangles = rectangles
                 self.lock.release()
