@@ -1,5 +1,4 @@
 import cv2 as cv
-import numpy as np
 import time
 
 from window_capture import WindowCapture
@@ -9,7 +8,7 @@ from detection import Detection
 
 def main():
     # Initialize the WindowCapture class to capture screenshots from the game window
-    wincap = WindowCapture('Dark Orbit')
+    wincap = WindowCapture("Dark Orbit")
 
     # Initialize the Detection class for bonus box detection
     bonus_box_detection = Detection("bonus_box.png")
