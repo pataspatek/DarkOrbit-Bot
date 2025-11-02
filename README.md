@@ -1,4 +1,4 @@
-# Dark Orbit Bot (Python Automation)
+# 🚀 Dark Orbit Bot (Python Automation)
 
 A **real-time automation bot** for the browser game **Dark Orbit**.  
 This bot captures the game window, detects loot boxes, and automatically collects them — simulating human-like clicks and movement across the map.
@@ -45,5 +45,11 @@ This bot captures the game window, detects loot boxes, and automatically collect
    - Click on them automatically
    - Move your ship to the next location on the map
 
+---
+
+## 🧑‍💻 Author
+
+**Patrik Pátek**
+🐙 [GitHub](https://github.com/pataspatek)
 
 
